@@ -14,6 +14,12 @@ jobs:
     runs-on: ${{ matrix.os }}-latest
     steps:
 
+    - name: Set up Visual Studio shell
+      if: runner.os == 'Windows'
+      uses: egor-tensin/vs-shell@v2
+      with:
+        arch: x64
+
     - shell: bash
       run: |
 
