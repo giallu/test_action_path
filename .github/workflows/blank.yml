@@ -1,0 +1,46 @@
+name: Demonstrate Bug
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test_github_path:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu, macos, windows ]
+
+    name: "${{ matrix.os }}: try $GITHUB_PATH"
+    runs-on: ${{ matrix.os }}-latest
+    steps:
+
+    - shell: bash
+      run: |
+
+        # create a new bin path
+        mkdir -p $HOME/binaries
+        
+        # make an script that prints "I am working." when it works
+        echo "echo 'I am working.'" >> $HOME/binaries/works.sh
+        
+        # make the script executable
+        chmod +x $HOME/binaries/works.sh
+
+        # examine the path before
+        echo "PATH BEFORE:"
+        echo ${PATH}
+
+        # add to the $PATH according to github docs
+        echo "$HOME/binaries" >> $GITHUB_PATH
+
+    - shell: bash
+      run: |
+
+        echo "PATH IN NEXT STEP:"
+        echo ${PATH}
+
+        # runn fully qualified in next step
+        $HOME/binaries/works.sh
+
+        # run via $PATH in subsequent step
+        works.sh
